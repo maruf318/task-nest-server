@@ -24,6 +24,25 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
+    const taskCollection = client.db("taskManagementDB").collection("tasks");
+
+    //task related api
+    app.post("/tasks", async (req, res) => {
+      const newTask = req.body;
+      const result = await taskCollection.insertOne(newTask);
+      res.send(result);
+    });
+    //getting some data of a certain user
+    app.get("/tasks", async (req, res) => {
+      console.log(req.query.email);
+      let query = {};
+      if (req.query?.email) {
+        query = { userEmail: req.query.email };
+      }
+      const result = await taskCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log(
