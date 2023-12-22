@@ -42,6 +42,12 @@ async function run() {
       const result = await taskCollection.find(query).toArray();
       res.send(result);
     });
+    app.get("/task/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await taskCollection.findOne(query);
+      res.send(result);
+    });
 
     app.patch("/tasks/:id", async (req, res) => {
       const id = req.params.id;
@@ -53,6 +59,25 @@ async function run() {
         },
       };
       const result = await taskCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+    app.patch("/task/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+
+      const updatedTask = req.body;
+      console.log(id, updatedTask);
+      const task = {
+        $set: {
+          title: updatedTask.title,
+          priority: updatedTask.priority,
+          description: updatedTask.description,
+          deadline: updatedTask.deadline,
+          userEmail: updatedTask.userEmail,
+          category: updatedTask.category,
+        },
+      };
+      const result = await taskCollection.updateOne(filter, task);
       res.send(result);
     });
 
